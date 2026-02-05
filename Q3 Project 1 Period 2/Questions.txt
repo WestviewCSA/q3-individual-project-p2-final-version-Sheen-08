@@ -1,3 +1,29 @@
 Questions:
 
 Write as many questions as you can based on the project specs.
+
+1. What are 3D arrays and how will we use them for this project? [O]
+2. Are we creating a maze for Wolverine to go through or will we have a predefined maze to
+	work around? [O]
+3. If there is no Wolverine Buck in a maze, Wolverine will have to go find the next maze
+	and go search through the next maze to find it. How do we determine if it isn't there
+	and Wolverine needs to go keep searching in the next maze and how is that next maze
+	generated? [O]
+4. Please define what a "good" runtime is. [O]
+5. Could you please explain what the "generous set time limit" is? [O]
+6. What are the illegal moves? [O]
+7. What is an optimal path? [O]
+8. You say we need to use the Scanner class. What do we need a user input for? [O]
+9. Can you explain the two forms of outputs in more detail please? [O]
+10. Could you explain what the autograder is please? Is it something in canvas or some sort
+	of test cases that will be tested? [O]
+11. Could you explain what the "switches" are please? [O]
+12. What are the main goals and takeaways from this project? [O]
+13. What are the command line arguments? [O]
+14. Are we using all the stack-based approaches in this project? [C]
+15. Who can I ask for help with this project? [O]
+16. Do we get any sort of starter code to help with this project (please...)? [C]
+
+What question(s) did you generate that can be better (get to real answers or understanding) 
+by rewording them to be open-ended or closed? 
+	I think I could change question number 8.
