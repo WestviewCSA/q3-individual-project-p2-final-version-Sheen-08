@@ -54,12 +54,10 @@ public class Runner {
 			nums = Integer.parseInt(scanner.next());
 			mapArray = new String[rows*nums][cols];
 			
-				for(int r = 0; r < mapArray.length; r++) {
-					String newRow = scanner.next();
-					for(int c = 0; c < cols; c++) {
-						mapArray[r][c] = newRow.substring(c, c+1);
-					}
-				}
+			
+			
+			
+			
 			System.out.println(Arrays.deepToString(mapArray));
 			scanner.close();
 
