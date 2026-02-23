@@ -1,0 +1,18 @@
+4 4 1
+W$..
+....
+....
+....
+
+Solution
+W $ 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+
+
+
+
+
+
+// a valid map has at least one "W" and one "@"
