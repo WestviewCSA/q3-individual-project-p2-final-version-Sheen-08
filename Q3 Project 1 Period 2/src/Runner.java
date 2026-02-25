@@ -17,7 +17,7 @@ public class Runner {
 	public static void main(String[] args) {
 		//change this value to change the text file and run the code
 		//readFile("hardMap1");
-		readQueueFile("hardMap3c");
+		readFile("easyMap1");
 	}
 	
 	
@@ -35,9 +35,24 @@ public class Runner {
 				for(int r = 0; r < mapArray.length; r++) {
 					String newRow = scanner.next();
 					for(int c = 0; c < cols; c++) {
-						mapArray[r][c] = newRow.substring(c, c+1); //getting the specific value through a substring
+						//attempting the IllegalMapCharacterException
+						//need to fix
+						if(!newRow.substring(c, c+1).equals("w") && !newRow.substring(c, c+1).equals("$") && !newRow.substring(c, c+1).equals("|") && !newRow.substring(c, c+1).equals("@")) {
+							System.out.println("IllegalMapCharacterException");
+						}else {
+							mapArray[r][c] = newRow.substring(c, c+1); //getting the specific value through a substring
+
+						}
 					}
 				}
+				
+//				for(int r = 0; r < mapArray.length; r++) {
+//					String newRow = scanner.next();
+//					for(int c = 0; c < cols; c++) {
+//						mapArray[r][c] = newRow.substring(c, c+1); //getting the specific value through a substring
+//					}
+//				}
+				
 			System.out.println(Arrays.deepToString(mapArray)); //printing map
 			scanner.close();
 
