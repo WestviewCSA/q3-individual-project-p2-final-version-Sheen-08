@@ -16,29 +16,48 @@ public class Runner {
 	
 	public static void main(String[] args) {
 		//change this value to change the text file and run the code
-		//readFile("hardMap1");
-		readFile("easyMap1");
+		try {
+			readFile("easyMap1");	
+		} catch (IllegalMapCharacterException e){
+			System.out.println(e.getMessage());
+		} catch (IncompleteMapException e) {
+			System.out.println(e.getMessage());
+		} catch (IncorrectMapFormatException e) {
+			System.out.println(e.getMessage());
+		} catch (IllegalCommandLineInputsException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	
-	public static void readFile(String fileName) {
+	public static void readFile(String fileName) throws IllegalMapCharacterException,  IncompleteMapException, IncorrectMapFormatException, IllegalCommandLineInputsException{
 		try {
 			File file = new File(fileName);
 			Scanner scanner = new Scanner(file);
-			
+
 			//getting the amount of rows, cols, and nums and saving them to variables
 			rows = Integer.parseInt(scanner.next());
 			cols = Integer.parseInt(scanner.next());
 			nums = Integer.parseInt(scanner.next());
+			
+			//check integers for the first row
+			if(rows <= 0 || cols <= 0 || nums <= 0){
+				throw new IncorrectMapFormatException("IncorrectMapFormatException");
+			}
+			
 			mapArray = new String[rows*nums][cols];
 			
 				for(int r = 0; r < mapArray.length; r++) {
 					String newRow = scanner.next();
+					
+					if(newRow.length() != cols) {
+						throw new IncompleteMapException("IncompleteMapException");
+					}
+					
 					for(int c = 0; c < cols; c++) {
 						//attempting the IllegalMapCharacterException
-						//need to fix
-						if(!newRow.substring(c, c+1).equals("w") && !newRow.substring(c, c+1).equals("$") && !newRow.substring(c, c+1).equals("|") && !newRow.substring(c, c+1).equals("@")) {
-							System.out.println("IllegalMapCharacterException");
+						if(!(newRow.substring(c, c+1).equals("w")) && !(newRow.substring(c, c+1).equals("$")) && !(newRow.substring(c, c+1).equals("|")) && !(newRow.substring(c, c+1).equals("@")) && !(newRow.substring(c, c+1).equals("."))) {
+							throw new IllegalMapCharacterException("IllegalMapCharacterException");
 						}else {
 							mapArray[r][c] = newRow.substring(c, c+1); //getting the specific value through a substring
 
