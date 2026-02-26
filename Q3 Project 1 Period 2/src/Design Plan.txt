@@ -1,0 +1,18 @@
+Design Plan
+
+Week 1:
+- We are creating arrays to store all the values of the maps.
+- Add exceptions to the map readings.
+
+Week 2:
+- Implement Stack algorithm
+- Implement Queue algorithm
+- Command Line Arguments
+
+Week 3:
+- Find optimal path
+- Ensure we meet time requirements
+- Testing
+
+Week 4:
+- Finish testing and final edits
