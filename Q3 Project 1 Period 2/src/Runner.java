@@ -1,7 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Queue;
+
 
 /*
  * Worked with Aarna P, Anya Y, Emily S, Purvi J
@@ -119,6 +123,7 @@ public class Runner {
 			
 			System.out.println(Arrays.deepToString(mapArray));
 			scanner.close();
+			
 
 			
 		
@@ -126,6 +131,17 @@ public class Runner {
 			e.printStackTrace();
 			System.out.println("File Not Found!");
 		}
+	}
+	
+	public static void Queue() {
+		Queue<ArrayList> queue = new LinkedList<>();
+		
+		for(int i = 0; i < rows; i++) {
+			for(int j = 0; j < rows; j++) {
+				
+			}
+		}
+		
 	}
 
 }
