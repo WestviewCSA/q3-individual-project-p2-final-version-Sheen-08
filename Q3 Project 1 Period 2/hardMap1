@@ -4,21 +4,10 @@
 ....@.
 ..@@@.
 ..@...
-W.@...
+w.@...
 ......
 ......
 ..@@@@
 ..@.$@
 ..@.@@
 ......
-
-
-
-
-
-
-
-// a valid map has at least one "W" and one "@"
-//Generate a medium level map
-//slightly bigger
-//try 2 rooms aka there should be an open walkway for this one
