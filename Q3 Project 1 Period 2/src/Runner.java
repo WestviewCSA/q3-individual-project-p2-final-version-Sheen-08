@@ -196,7 +196,7 @@ public class Runner {
 	}
 	
 	public static void solveStack(String fileName) {
-		//solve today 
+		//solve today  
 	}
 
 }
