@@ -189,7 +189,7 @@ public class Runner {
 	                    queue.add(new int[]{nextR, nextC});
 	                }
 	            }
-	        }
+	        } 
 	    }
 	    // If the list is empty and no coin was found
 	    System.out.println("The Wolverine Store is closed.");
