@@ -195,7 +195,7 @@ public class Runner {
 	    System.out.println("The Wolverine Store is closed.");
 	}
 	
-	public static void solveStack(String fileName) {
+	public static void solveStack(String fileName) { 
 		//solve today  
 	}
 
