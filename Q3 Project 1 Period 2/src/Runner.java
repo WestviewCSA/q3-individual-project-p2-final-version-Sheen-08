@@ -3,12 +3,16 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.Stack;
 import java.util.ArrayList;
 import java.util.Queue;
 
+//if normal committing doesn's work: 
+//to commit to github I need to right-click the project and then click "team" and then "push branch master"
+//then click the "force override" option then "ok" (or whatever there is to commit it)
 
 /*
- * Worked with Aarna P, Anya Y, Emily S 
+ * Worked with Aarna P, Anya Y, Emily S for file reading and exceptions
  */
 
 public class Runner {
@@ -23,6 +27,7 @@ public class Runner {
 		try {
 			readFile("mediumMap2");	
 			solveQueue("mediumMap2");
+			solveStack("mediumMap2");
 		} catch (IllegalMapCharacterException e){
 			System.out.println(e.getMessage());
 		} catch (IncompleteMapException e) {
@@ -138,7 +143,7 @@ public class Runner {
 	    //the queue - AKA. where I need to search
 	    Queue<int[]> queue = new LinkedList<>();
 	    
-	    //keeping track of where I have been so I don't walk in circles
+	    //keeping track (in a 2D array) of where I have been so I don't walk in circles
 	    boolean[][] visited = new boolean[rows * nums][cols];
 
 	    //Find Wolverine's start position
@@ -160,9 +165,10 @@ public class Runner {
 	    visited[startR][startC] = true;
 
 	    while (!queue.isEmpty()) {
-	    	//the .poll() method grabs the item from the front of the queue 
+	    	//the .poll() method grabs the item from the front of the queue (can only be used in queues)
 	    	//and removes it from the queue at the same time so we don't have to use 2 different methods (add and remove)
 	    	//got assistance from google for the .poll() method
+	    	//tip: use .pop() instead of .poll() for stacks
 	        int[] current = queue.poll();
 	        int currR = current[0];
 	        int currC = current[1];
@@ -196,7 +202,28 @@ public class Runner {
 	}
 	
 	public static void solveStack(String fileName) { 
-		//solve today  
+		//the stack - AKA where I need to search
+		Stack<int[]> stack = new Stack<>();
+
+	    //keeping track (in a 2D array) of where I have been so I don't walk in circles
+	    boolean[][] visit = new boolean[rows * nums][cols];
+	    
+	    //Find Wolverine's start position
+	    int startR = 0;
+	    int startC = 0;
+	    for (int r = 0; r < rows * nums; r++) {
+	        for (int c = 0; c < cols; c++) {
+	            if (mapArray[r][c].equals("w")) {
+	                startR = r;
+	                startC = c;
+	            }
+	        }
+	    }
+	    
+	    //start searching
+	    
+	    
+	    
 	}
 
 }
