@@ -175,7 +175,7 @@ public class Runner {
 
 	        //see if we found the buck
 	        if (mapArray[currR][currC].equals("$")) {
-	            System.out.println("Found it!");
+	            System.out.println("Queue approach: Found it!");
 	            return; 
 	        }
 
@@ -198,32 +198,60 @@ public class Runner {
 	        } 
 	    }
 	    // If the list is empty and no coin was found
-	    System.out.println("The Wolverine Store is closed.");
+	    System.out.println("Queue approach: The Wolverine Store is closed.");
 	}
 	
-	public static void solveStack(String fileName) { 
-		//the stack - AKA where I need to search
-		Stack<int[]> stack = new Stack<>();
-
-	    //keeping track (in a 2D array) of where I have been so I don't walk in circles
-	    boolean[][] visit = new boolean[rows * nums][cols];
+	public static void solveStack(String fileName) {
+	    //stack of places to go search
+	    Stack<int[]> stack = new Stack<>();
 	    
-	    //Find Wolverine's start position
-	    int startR = 0;
-	    int startC = 0;
+	    //track spots visited so I don't walk in circles
+	    boolean[][] visited = new boolean[rows * nums][cols];
+	    
+	    // 3. Find 'w' (Start Position)
+	    int startR = 0, startC = 0;
 	    for (int r = 0; r < rows * nums; r++) {
 	        for (int c = 0; c < cols; c++) {
-	            if (mapArray[r][c].equals("w")) {
-	                startR = r;
-	                startC = c;
+	            if (mapArray[r][c].equals("W")) {
+	                startR = r; startC = c;
 	            }
 	        }
 	    }
+
+	    //put my stating value in the stack
+	    stack.push(new int[]{startR, startC});
+	    visited[startR][startC] = true;
 	    
-	    //start searching
-	    
-	    
-	    
+	    //begin searching
+	    while (!stack.isEmpty()) {
+	        int[] current = stack.pop(); 
+	        int currR = current[0];
+	        int currC = current[1];
+
+	        //check if we found the buck
+	        if (mapArray[currR][currC].equals("$")) {
+	            System.out.println("Stack approach: Found it!");
+	            return; 
+	        }
+
+	        //check neighbors in order: North(up), South(down), East(right), West(left)
+	        int[][] directions = {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+	        
+	        for (int[] dir : directions) {
+	            int nextR = currR + dir[0];
+	            int nextC = currC + dir[1];
+
+	            // Boundary Check
+	            if (nextR >= 0 && nextR < rows * nums && nextC >= 0 && nextC < cols) {
+	                //make sure it isn't a wall '@'
+	                if (!mapArray[nextR][nextC].equals("@") && !visited[nextR][nextC]) {
+	                    visited[nextR][nextC] = true;
+	                    stack.push(new int[]{nextR, nextC}); // .push() adds to the top
+	                }
+	            }
+	        }
+	    }
+	    System.out.println("Stack approach: The Wolverine Store is closed.");
 	}
 
 }
