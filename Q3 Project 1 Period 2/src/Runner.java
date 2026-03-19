@@ -28,6 +28,8 @@ public class Runner {
 			readFile("mediumMap2");	
 			solveQueue("mediumMap2");
 			solveStack("mediumMap2");
+			//backtrack("mediumMap2");
+			printMap("mediumMap2");
 		} catch (IllegalMapCharacterException e){
 			System.out.println(e.getMessage());
 		} catch (IncompleteMapException e) {
@@ -142,6 +144,7 @@ public class Runner {
 	public static void solveQueue(String fileName) {
 	    //the queue - AKA. where I need to search
 	    Queue<int[]> queue = new LinkedList<>();
+	    long startTime = System.nanoTime(); //for timer
 	    
 	    //keeping track (in a 2D array) of where I have been so I don't walk in circles
 	    boolean[][] visited = new boolean[rows * nums][cols];
@@ -175,7 +178,11 @@ public class Runner {
 
 	        //see if we found the buck
 	        if (mapArray[currR][currC].equals("$")) {
+	        	long endTime = System.nanoTime();
+	            double duration = (endTime - startTime) / 1_000_000_000.0; // Convert to seconds
+	            
 	            System.out.println("Queue approach: Found it!");
+	            System.out.println("Total Runtime (Queues): " + duration + " seconds");
 	            return; 
 	        }
 
@@ -198,12 +205,17 @@ public class Runner {
 	        } 
 	    }
 	    // If the list is empty and no coin was found
+	    long endTime = System.nanoTime();
+	    double duration = (endTime - startTime) / 1_000_000_000.0;
+	    
 	    System.out.println("Queue approach: The Wolverine Store is closed.");
+	    System.out.println("Total Runtime (Queues): " + duration + " seconds");
 	}
 	
 	public static void solveStack(String fileName) {
 	    //stack of places to go search
 	    Stack<int[]> stack = new Stack<>();
+	    long startTime = System.nanoTime(); //for timer
 	    
 	    //track spots visited so I don't walk in circles
 	    boolean[][] visited = new boolean[rows * nums][cols];
@@ -230,7 +242,11 @@ public class Runner {
 
 	        //check if we found the buck
 	        if (mapArray[currR][currC].equals("$")) {
+	            long endTime = System.nanoTime();
+	            double duration = (endTime - startTime) / 1_000_000_000.0; // Convert to seconds
+	            
 	            System.out.println("Stack approach: Found it!");
+	            System.out.println("Total Runtime (Stacks): " + duration + " seconds");
 	            return; 
 	        }
 
@@ -251,7 +267,45 @@ public class Runner {
 	            }
 	        }
 	    }
+	    long endTime = System.nanoTime();
+	    double duration = (endTime - startTime) / 1_000_000_000.0;
+	    
 	    System.out.println("Stack approach: The Wolverine Store is closed.");
+	    System.out.println("Total Runtime (Stacks): " + duration + " seconds");
+	}
+	
+	/*
+	 * Still work in progress
+	 */
+	//path marking
+	//this is where we draw out the path taken using plus signs '+'
+	public static void path(String[][] cameFrom, int startR, int startC, int coinR, int coinC, String fileName) {
+	    int currR = coinR;
+	    int currC = coinC;
+
+	    // Follow the trail until we hit the 'W' coordinates
+	    while (!(currR == startR && currC == startC)) {
+	        String str = cameFrom[currR][currC];
+	        
+	        //Split it into row and col
+	        String[] parts = str.split(",");
+	        currR = Integer.parseInt(parts[0]);
+	        currC = Integer.parseInt(parts[1]);
+
+	        //Mark with '+' if it's not the starting 'w'
+	        if (!mapArray[currR][currC].equals("w")) {
+	            mapArray[currR][currC] = "+";
+	        }
+	    }
+	}
+	//method to print out my map to console
+	public static void printMap(String fileName) {
+	    for (int r = 0; r < rows * nums; r++) {
+	        for (int c = 0; c < cols; c++) {
+	            System.out.print(mapArray[r][c]);
+	        }
+	        System.out.println();
+	    }
 	}
 
 }
