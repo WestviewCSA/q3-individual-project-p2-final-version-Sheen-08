@@ -13,6 +13,17 @@ import java.util.Queue;
 
 /*
  * Worked with Aarna P, Anya Y, Emily S for file reading and exceptions
+ * Got help from google for the .poll() method and how to get timing working for queues 
+ * (which i then implemented in stacks as well) and command line arguments
+ */
+
+
+/*
+ * Stuff I still have left in my project:
+ * 1. Path method to represent the path with '+' signs
+ * 2. "--Opt" method where i need to use the optimal search method
+ * 3. Open walkways
+ * 4. "--Incoordinate" and "--Outcoordinate" methods
  */
 
 public class Runner {
@@ -23,22 +34,93 @@ public class Runner {
 	public static int nums; //number of sections
 	
 	public static void main(String[] args) {
-		//change this value to change the text file and run the code
-		try {
-			readFile("mediumMap2");	
-			solveQueue("mediumMap2");
-			solveStack("mediumMap2");
-			//backtrack("mediumMap2");
-			printMap("mediumMap2");
-		} catch (IllegalMapCharacterException e){
+		/*
+		 * How to run the code for testing with command line arguments:
+		 * Click on the arrow by the run button
+		 * Click "Run Configurations..."
+		 * Click the "Arguments" tab
+		 * In "Program Arguments" type in the argument you want to run
+		 * Click "Run"
+		 */
+	    String fileName = "";
+	    boolean useStack = false;
+	    boolean useQueue = false;
+	    boolean showTime = false;
+
+	    try {
+	        //check if we have any arguments
+	        if (args.length == 0) {
+	            throw new IllegalCommandLineInputsException("No arguments!");
+	        }
+
+	        //loop through args to set our "switches"
+	        /*
+	         * switches are special command-line instructions starting with dashes 
+	         * that tell a program which specific features, modes, or methods to "turn on"
+	         */
+	        for (int i = 0; i < args.length; i++) {
+	            String arg = args[i];
+
+	            if (arg.equals("--Stack")) {
+	                useStack = true;
+	            } else if (arg.equals("--Queue")) {
+	                useQueue = true;
+	            } else if (arg.equals("--Time")) {
+	                showTime = true;
+	            } else if (arg.equals("--help")) {
+	                printHelp(); // A small helper method to explain how to use the app
+	                return;
+	            } else if (!arg.startsWith("--")) {
+	                // If it doesn't start with --, it's our file name
+	                fileName = arg;
+	            } else {
+	                // If they typed something like --Dance, throw an error
+	                throw new IllegalCommandLineInputsException("Unknown switch: " + arg);
+	            }
+	        }
+
+	        //Validation: Did they pick a search method? Did they pick BOTH?
+	        if (useStack && useQueue) {
+	            throw new IllegalCommandLineInputsException("Cannot use both --Stack and --Queue at the same time.");
+	        }
+	        if (!useStack && !useQueue) {
+	            throw new IllegalCommandLineInputsException("You must specify either --Stack or --Queue.");
+	        }
+	        if (fileName.isEmpty()) {
+	            throw new IllegalCommandLineInputsException("No map file specified.");
+	        }
+
+	        //Run the actual program logic
+	        readFile(fileName);
+	        
+	        if (useQueue) {
+	            solveQueue(fileName); 
+	        } else {
+	            solveStack(fileName);
+	        }
+
+	        //Print final results
+	        printMap(fileName);
+	        //all exception catch calls listed here:
+	    } catch (IllegalMapCharacterException e){
 			System.out.println(e.getMessage());
 		} catch (IncompleteMapException e) {
 			System.out.println(e.getMessage());
 		} catch (IncorrectMapFormatException e) {
 			System.out.println(e.getMessage());
-		} catch (IllegalCommandLineInputsException e) {
-			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			System.out.println("unexpected error: " + e.getMessage());
 		}
+	}
+
+	// A helper method for the '--help' switch
+	public static void printHelp() {
+	    System.out.println("Wolverine Maze Solver Help:");
+	    System.out.println("Usage: java Runner [switches] [filename]");
+	    System.out.println("Switches: ");
+	    System.out.println("--Stack: Use stack-based searching");
+	    System.out.println("--Queue: Use queue-based searching");
+	    System.out.println("--Time: Show how long the search took");
 	}
 	
 	
@@ -298,6 +380,7 @@ public class Runner {
 	        }
 	    }
 	}
+	
 	//method to print out my map to console
 	public static void printMap(String fileName) {
 	    for (int r = 0; r < rows * nums; r++) {
@@ -309,3 +392,8 @@ public class Runner {
 	}
 
 }
+
+
+
+
+
