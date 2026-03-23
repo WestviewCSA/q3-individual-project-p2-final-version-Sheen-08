@@ -26,7 +26,7 @@ import java.util.Queue;
  * 4. "--Incoordinate" and "--Outcoordinate" methods
  */
 
-public class Runner {
+public class p1 {
 	
 	public static String[][] mapArray; //creates the 2D array to store the map
 	public static int rows; 
@@ -68,13 +68,11 @@ public class Runner {
 	            } else if (arg.equals("--Time")) {
 	                showTime = true;
 	            } else if (arg.equals("--help")) {
-	                printHelp(); // A small helper method to explain how to use the app
+	                printHelp();
 	                return;
 	            } else if (!arg.startsWith("--")) {
-	                // If it doesn't start with --, it's our file name
 	                fileName = arg;
 	            } else {
-	                // If they typed something like --Dance, throw an error
 	                throw new IllegalCommandLineInputsException("Unknown switch: " + arg);
 	            }
 	        }
@@ -362,23 +360,32 @@ public class Runner {
 	//path marking
 	//this is where we draw out the path taken using plus signs '+'
 	public static void path(String[][] cameFrom, int startR, int startC, int coinR, int coinC, String fileName) {
-	    int currR = coinR;
-	    int currC = coinC;
+	    // Start from the tile that led to the coin
+	    String leadToCoin = cameFrom[coinR][coinC];
+	    if (leadToCoin == null) return; // No path found
 
-	    // Follow the trail until we hit the 'W' coordinates
+	    String[] parts = leadToCoin.split(",");
+	    int currR = Integer.parseInt(parts[0]);
+	    int currC = Integer.parseInt(parts[1]);
+
+	    // Backtrack until we hit Wolverine's start
 	    while (!(currR == startR && currC == startC)) {
-	        String str = cameFrom[currR][currC];
-	        
-	        //Split it into row and col
-	        String[] parts = str.split(",");
-	        currR = Integer.parseInt(parts[0]);
-	        currC = Integer.parseInt(parts[1]);
-
-	        //Mark with '+' if it's not the starting 'w'
-	        if (!mapArray[currR][currC].equals("w")) {
+	        // Mark the current spot with +
+	        if (!mapArray[currR][currC].equals("|")) {
 	            mapArray[currR][currC] = "+";
 	        }
+
+	        // Move to the previous tile
+	        String nextStep = cameFrom[currR][currC];
+	        parts = nextStep.split(",");
+	        currR = Integer.parseInt(parts[0]);
+	        currC = Integer.parseInt(parts[1]);
 	    }
+	}
+	
+	//optimal path method
+	public static void optimalPath(String fileName) {
+		
 	}
 	
 	//method to print out my map to console
