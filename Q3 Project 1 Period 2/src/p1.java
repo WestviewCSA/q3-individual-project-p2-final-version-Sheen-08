@@ -32,19 +32,21 @@ public class p1 {
 	public static int rows; 
 	public static int cols;
 	public static int nums; //number of sections
+	public static boolean showTime = false;
 	
 	public static void main(String[] args) {
-		/*
-		 * How to run the code for testing with command line arguments:
-		 * Click on the arrow by the run button
-		 * Click "Run Configurations..."
-		 * Click the "Arguments" tab
-		 * In "Program Arguments" type in the argument you want to run
-		 * Click "Run"
-		 */
+	    /*
+	     * How to run the code for testing with command line arguments:
+	     * Click on the arrow by the run button
+	     * Click "Run Configurations..."
+	     * Click the "Arguments" tab
+	     * In "Program Arguments" type in the argument you want to run
+	     * Click "Run"
+	     */
 	    String fileName = "";
 	    boolean useStack = false;
 	    boolean useQueue = false;
+	    boolean useOpt = false; // Added for optimal path
 	    boolean showTime = false;
 
 	    try {
@@ -65,6 +67,8 @@ public class p1 {
 	                useStack = true;
 	            } else if (arg.equals("--Queue")) {
 	                useQueue = true;
+	            } else if (arg.equals("--Opt")) {
+	                useOpt = true; // Set opt to true
 	            } else if (arg.equals("--Time")) {
 	                showTime = true;
 	            } else if (arg.equals("--help")) {
@@ -78,11 +82,16 @@ public class p1 {
 	        }
 
 	        //Validation: Did they pick a search method? Did they pick BOTH?
-	        if (useStack && useQueue) {
-	            throw new IllegalCommandLineInputsException("Cannot use both --Stack and --Queue at the same time.");
+	        int count = 0;
+	        if (useStack) count++;
+	        if (useQueue) count++;
+	        if (useOpt) count++;
+
+	        if (count > 1) {
+	            throw new IllegalCommandLineInputsException("Cannot use more than one search method at the same time.");
 	        }
-	        if (!useStack && !useQueue) {
-	            throw new IllegalCommandLineInputsException("You must specify either --Stack or --Queue.");
+	        if (count == 0) {
+	            throw new IllegalCommandLineInputsException("You must specify either --Stack, --Queue, or --Opt.");
 	        }
 	        if (fileName.isEmpty()) {
 	            throw new IllegalCommandLineInputsException("No map file specified.");
@@ -91,7 +100,8 @@ public class p1 {
 	        //Run the actual program logic
 	        readFile(fileName);
 	        
-	        if (useQueue) {
+	        // If they pick --Queue OR --Opt, run solveQueue because BFS (Breadth-First Search) is the optimal search
+	        if (useQueue || useOpt) {
 	            solveQueue(fileName); 
 	        } else {
 	            solveStack(fileName);
@@ -99,16 +109,19 @@ public class p1 {
 
 	        //Print final results
 	        printMap(fileName);
+	        
 	        //all exception catch calls listed here:
 	    } catch (IllegalMapCharacterException e){
-			System.out.println(e.getMessage());
-		} catch (IncompleteMapException e) {
-			System.out.println(e.getMessage());
-		} catch (IncorrectMapFormatException e) {
-			System.out.println(e.getMessage());
-		} catch (Exception e) {
-			System.out.println("unexpected error: " + e.getMessage());
-		}
+	        System.out.println(e.getMessage());
+	    } catch (IncompleteMapException e) {
+	        System.out.println(e.getMessage());
+	    } catch (IncorrectMapFormatException e) {
+	        System.out.println(e.getMessage());
+	    } catch (IllegalCommandLineInputsException e) {
+	        System.out.println(e.getMessage());
+	    } catch (Exception e) {
+	        System.out.println("unexpected error: " + e.getMessage());
+	    }
 	}
 
 	// A helper method for the '--help' switch
@@ -225,6 +238,7 @@ public class p1 {
 	    //the queue - AKA. where I need to search
 	    Queue<int[]> queue = new LinkedList<>();
 	    long startTime = System.nanoTime(); //for timer
+	    String[][] cameFrom = new String[rows * nums][cols];
 	    
 	    //keeping track (in a 2D array) of where I have been so I don't walk in circles
 	    boolean[][] visited = new boolean[rows * nums][cols];
@@ -259,11 +273,12 @@ public class p1 {
 	        //see if we found the buck
 	        if (mapArray[currR][currC].equals("$")) {
 	        	long endTime = System.nanoTime();
-	            double duration = (endTime - startTime) / 1_000_000_000.0; // Convert to seconds
-	            
-	            System.out.println("Queue approach: Found it!");
-	            System.out.println("Total Runtime (Queues): " + duration + " seconds");
-	            return; 
+	        	if(showTime) {
+		            double duration = (endTime - startTime) / 1_000_000_000.0; // Convert to seconds
+		            System.out.println("Total Runtime (Queues): " + duration + " seconds");
+	        	}
+	            path(cameFrom, startR, startC, currR, currC, fileName);
+	            return;
 	        }
 
 	        //check North(up), South(down), East(right), West(left)
@@ -279,6 +294,7 @@ public class p1 {
 	                //check if it is walkable and hasn't already been visited
 	                if (!mapArray[nextR][nextC].equals("@") && !visited[nextR][nextC]) {
 	                    visited[nextR][nextC] = true;
+	                    cameFrom[nextR][nextC] = currR + "," + currC;
 	                    queue.add(new int[]{nextR, nextC});
 	                }
 	            }
@@ -296,18 +312,24 @@ public class p1 {
 	    //stack of places to go search
 	    Stack<int[]> stack = new Stack<>();
 	    long startTime = System.nanoTime(); //for timer
+	    String[][] cameFrom = new String[rows * nums][cols];
 	    
 	    //track spots visited so I don't walk in circles
 	    boolean[][] visited = new boolean[rows * nums][cols];
 	    
 	    // 3. Find 'w' (Start Position)
-	    int startR = 0, startC = 0;
+	    int startR = -1;
+	    int startC = -1;
 	    for (int r = 0; r < rows * nums; r++) {
 	        for (int c = 0; c < cols; c++) {
-	            if (mapArray[r][c].equals("W")) {
+	            if (mapArray[r][c].equals("w")) {
 	                startR = r; startC = c;
 	            }
 	        }
+	    }
+	    if (startR == -1) {
+	        System.out.println("Error: Wolverine ('W') was not found on the map!");
+	        return;
 	    }
 
 	    //put my stating value in the stack
@@ -323,11 +345,14 @@ public class p1 {
 	        //check if we found the buck
 	        if (mapArray[currR][currC].equals("$")) {
 	            long endTime = System.nanoTime();
-	            double duration = (endTime - startTime) / 1_000_000_000.0; // Convert to seconds
-	            
-	            System.out.println("Stack approach: Found it!");
-	            System.out.println("Total Runtime (Stacks): " + duration + " seconds");
-	            return; 
+	            if(showTime) {
+	            	double duration = (endTime - startTime) / 1_000_000_000.0; // Convert to seconds
+		            
+		            System.out.println("Stack approach: Found it!");
+		            System.out.println("Total Runtime (Stacks): " + duration + " seconds");
+	            }
+	            path(cameFrom, startR, startC, currR, currC, fileName);
+	            return;
 	        }
 
 	        //check neighbors in order: North(up), South(down), East(right), West(left)
@@ -342,6 +367,7 @@ public class p1 {
 	                //make sure it isn't a wall '@'
 	                if (!mapArray[nextR][nextC].equals("@") && !visited[nextR][nextC]) {
 	                    visited[nextR][nextC] = true;
+	                    cameFrom[nextR][nextC] = currR + "," + currC;
 	                    stack.push(new int[]{nextR, nextC}); // .push() adds to the top
 	                }
 	            }
@@ -383,10 +409,6 @@ public class p1 {
 	    }
 	}
 	
-	//optimal path method
-	public static void optimalPath(String fileName) {
-		
-	}
 	
 	//method to print out my map to console
 	public static void printMap(String fileName) {
