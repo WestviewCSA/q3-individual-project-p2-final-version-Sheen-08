@@ -33,95 +33,100 @@ public class p1 {
 	public static int cols;
 	public static int nums; //number of sections
 	public static boolean showTime = false;
+    public static boolean isOutcoordinate = false;
+    public static boolean isIncoordinate = false;
 	
 	public static void main(String[] args) {
-	    /*
-	     * How to run the code for testing with command line arguments:
-	     * Click on the arrow by the run button
-	     * Click "Run Configurations..."
-	     * Click the "Arguments" tab
-	     * In "Program Arguments" type in the argument you want to run
-	     * Click "Run"
-	     */
-	    String fileName = "";
-	    boolean useStack = false;
-	    boolean useQueue = false;
-	    boolean useOpt = false; // Added for optimal path
-	    boolean showTime = false;
+        /*
+         * How to run the code for testing with command line arguments:
+         * Click on the arrow by the run button, "Run Configurations...", "Arguments" tab
+         */
+        String fileName = "";
+        boolean useStack = false;
+        boolean useQueue = false;
+        boolean useOpt = false; 
 
-	    try {
-	        //check if we have any arguments
-	        if (args.length == 0) {
-	            throw new IllegalCommandLineInputsException("No arguments!");
-	        }
+        try {
+            //check if we have any arguments
+            if (args.length == 0) {
+                throw new IllegalCommandLineInputsException("No arguments!");
+            }
 
-	        //loop through args to set our "switches"
-	        /*
-	         * switches are special command-line instructions starting with dashes 
-	         * that tell a program which specific features, modes, or methods to "turn on"
-	         */
-	        for (int i = 0; i < args.length; i++) {
-	            String arg = args[i];
+            //loop through args to set our "switches"
+            for (int i = 0; i < args.length; i++) {
+                String arg = args[i];
 
-	            if (arg.equals("--Stack")) {
-	                useStack = true;
-	            } else if (arg.equals("--Queue")) {
-	                useQueue = true;
-	            } else if (arg.equals("--Opt")) {
-	                useOpt = true; // Set opt to true
-	            } else if (arg.equals("--Time")) {
-	                showTime = true;
-	            } else if (arg.equals("--help")) {
-	                printHelp();
-	                return;
-	            } else if (!arg.startsWith("--")) {
-	                fileName = arg;
-	            } else {
-	                throw new IllegalCommandLineInputsException("Unknown switch: " + arg);
-	            }
-	        }
+                if (arg.equals("--Stack")) {
+                    useStack = true;
+                } else if (arg.equals("--Queue")) {
+                    useQueue = true;
+                } else if (arg.equals("--Opt")) {
+                    useOpt = true; 
+                } else if (arg.equals("--Time")) {
+                    showTime = true;
+                } else if (arg.equals("--Incoordinate")) {
+                    isIncoordinate = true;
+                } else if (arg.equals("--Outcoordinate")) {
+                    isOutcoordinate = true;
+                } else if (arg.equals("--help")) {
+                    printHelp();
+                    return;
+                } else if (!arg.startsWith("--")) {
+                    fileName = arg;
+                } else {
+                    throw new IllegalCommandLineInputsException("Unknown switch: " + arg);
+                }
+            }
 
-	        //Validation: Did they pick a search method? Did they pick BOTH?
-	        int count = 0;
-	        if (useStack) count++;
-	        if (useQueue) count++;
-	        if (useOpt) count++;
+            //Validation: Ensure only one search method is picked
+            int count = 0;
+            if (useStack) count++;
+            if (useQueue) count++;
+            if (useOpt) count++;
 
-	        if (count > 1) {
-	            throw new IllegalCommandLineInputsException("Cannot use more than one search method at the same time.");
-	        }
-	        if (count == 0) {
-	            throw new IllegalCommandLineInputsException("You must specify either --Stack, --Queue, or --Opt.");
-	        }
-	        if (fileName.isEmpty()) {
-	            throw new IllegalCommandLineInputsException("No map file specified.");
-	        }
+            if (count > 1) {
+                throw new IllegalCommandLineInputsException("Cannot use more than one search method at the same time.");
+            }
+            if (count == 0) {
+                throw new IllegalCommandLineInputsException("You must specify either --Stack, --Queue, or --Opt.");
+            }
+            if (fileName.isEmpty()) {
+                throw new IllegalCommandLineInputsException("No map file specified.");
+            }
 
-	        //Run the actual program logic
-	        readFile(fileName);
-	        
-	        // If they pick --Queue OR --Opt, run solveQueue because BFS (Breadth-First Search) is the optimal search
-	        if (useQueue || useOpt) {
-	            solveQueue(fileName); 
-	        } else {
-	            solveStack(fileName);
-	        }
+            //Run the actual program logic
+            // Use the correct read method based on the switch
+            if (isIncoordinate) {
+                readCoordinateFile(fileName);
+            } else {
+                readFile(fileName);
+            }
+            
+            // Run search (Queue and Opt both use BFS)
+            if (useQueue || useOpt) {
+                solveQueue(fileName); 
+            } else {
+                solveStack(fileName);
+            }
 
-	        //Print final results
-	        printMap(fileName);
-	        
-	        //all exception catch calls listed here:
-	    } catch (IllegalMapCharacterException e){
-	        System.out.println(e.getMessage());
-	    } catch (IncompleteMapException e) {
-	        System.out.println(e.getMessage());
-	    } catch (IncorrectMapFormatException e) {
-	        System.out.println(e.getMessage());
-	    } catch (IllegalCommandLineInputsException e) {
-	        System.out.println(e.getMessage());
-	    } catch (Exception e) {
-	        System.out.println("unexpected error: " + e.getMessage());
-	    }
+            // Print final results based on Output format
+            if (isOutcoordinate) {
+                printCoordinates();
+            } else {
+                printMap(fileName);
+            }
+            
+        } catch (IllegalMapCharacterException e){
+            System.out.println(e.getMessage());
+        } catch (IncompleteMapException e) {
+            System.out.println(e.getMessage());
+        } catch (IncorrectMapFormatException e) {
+            System.out.println(e.getMessage());
+        } catch (IllegalCommandLineInputsException e) {
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println("unexpected error: " + e.getMessage());
+        }
 	}
 
 	// A helper method for the '--help' switch
@@ -291,12 +296,20 @@ public class p1 {
 
 	            //check if it is in the map
 	            if (nextR >= 0 && nextR < rows * nums && nextC >= 0 && nextC < cols) {
-	                //check if it is walkable and hasn't already been visited
-	                if (!mapArray[nextR][nextC].equals("@") && !visited[nextR][nextC]) {
+	            	if (!mapArray[nextR][nextC].equals("@") && !visited[nextR][nextC]) {
 	                    visited[nextR][nextC] = true;
 	                    cameFrom[nextR][nextC] = currR + "," + currC;
 	                    queue.add(new int[]{nextR, nextC});
-	                }
+	                    
+	                    if (mapArray[nextR][nextC].equals("|")) {
+	                        int jumpR = (nextR + rows) % (rows * nums); 
+	                        
+	                        if (!visited[jumpR][nextC] && !mapArray[jumpR][nextC].equals("@")) {
+	                            visited[jumpR][nextC] = true;
+	                            cameFrom[jumpR][nextC] = nextR + "," + nextC; 
+	                            queue.add(new int[]{jumpR, nextC});
+	                        }
+	                    }
 	            }
 	        } 
 	    }
@@ -306,6 +319,7 @@ public class p1 {
 	    
 	    System.out.println("Queue approach: The Wolverine Store is closed.");
 	    System.out.println("Total Runtime (Queues): " + duration + " seconds");
+	    }
 	}
 	
 	public static void solveStack(String fileName) {
@@ -365,11 +379,29 @@ public class p1 {
 	            // Boundary Check
 	            if (nextR >= 0 && nextR < rows * nums && nextC >= 0 && nextC < cols) {
 	                //make sure it isn't a wall '@'
-	                if (!mapArray[nextR][nextC].equals("@") && !visited[nextR][nextC]) {
-	                    visited[nextR][nextC] = true;
-	                    cameFrom[nextR][nextC] = currR + "," + currC;
-	                    stack.push(new int[]{nextR, nextC}); // .push() adds to the top
-	                }
+	            	if (!mapArray[nextR][nextC].equals("@") && !visited[nextR][nextC]) {
+	            	    visited[nextR][nextC] = true;
+	            	    cameFrom[nextR][nextC] = currR + "," + currC;
+	            	    
+	            	    // Add the "normal" move to the stack
+	            	    stack.push(new int[]{nextR, nextC});
+	            	    
+	            	    // Check if the spot we just stepped on is a walkway
+	            	    if (mapArray[nextR][nextC].equals("|")) {
+	            	        // Find the same (r, c) on the next floor
+	            	        int jumpR = (nextR + rows) % (rows * nums); 
+	            	        
+	            	        if (!visited[jumpR][nextC] && !mapArray[jumpR][nextC].equals("@")) {
+	            	            visited[jumpR][nextC] = true;
+	            	            
+	            	            // Record that we got to the new floor FROM the walkway tile
+	            	            cameFrom[jumpR][nextC] = nextR + "," + nextC; 
+	            	            
+	            	            // Add the "jumped" position to the stack
+	            	            stack.push(new int[]{jumpR, nextC});
+	            	        }
+	            	    }
+	            	}
 	            }
 	        }
 	    }
@@ -417,6 +449,62 @@ public class p1 {
 	            System.out.print(mapArray[r][c]);
 	        }
 	        System.out.println();
+	    }
+	}
+	public static void printCoordinates() {
+	    for (int r = 0; r < rows * nums; r++) {
+	        for (int c = 0; c < cols; c++) {
+	            if (!mapArray[r][c].equals(".")) {
+	                int level = r / rows;
+	                int floorRow = r % rows;
+	                System.out.println(level + " " + floorRow + " " + c + " " + mapArray[r][c]);
+	            }
+	        }
+	    }
+	}
+	/**
+	 * Reads the maze from a coordinate-style file.
+	 * Format: 
+	 * rows cols levels
+	 * char row col level
+	 */
+	public static void readCoordinateFile(String fileName) {
+	    try {
+	        File file = new File(fileName);
+	        Scanner scanner = new Scanner(file);
+	        
+	        if (!scanner.hasNextInt()) {
+	        	return;
+	        }
+	        rows = scanner.nextInt();
+	        cols = scanner.nextInt();
+	        nums = scanner.nextInt();
+	        
+	        mapArray = new String[rows * nums][cols];
+	        for (int r = 0; r < rows * nums; r++) {
+	            Arrays.fill(mapArray[r], ".");
+	        }
+
+	        while (scanner.hasNext()) {
+	            String value = scanner.next();
+	            if (scanner.hasNextInt()) {
+	                int r = scanner.nextInt();
+	                int c = scanner.nextInt();
+	                int n = scanner.nextInt();
+	                int actualRow = (n * rows) + r;
+	                if (actualRow < rows * nums && c < cols) {
+	                    mapArray[actualRow][c] = value;
+	                }
+	            }
+	        }
+	        scanner.close();
+	        
+
+	    } catch (FileNotFoundException e) {
+	        System.out.println("File not found!");
+	    } catch (Exception e) {
+	        System.out.println("Error in readCoordinateFile: " + e.getMessage());
+	        e.printStackTrace();
 	    }
 	}
 
